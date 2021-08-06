@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 /// This is a class for specifying the text theme that's going to be used
 /// in your app
 abstract class MjTextTheme {
-  TextStyle _style(double s, FontWeight w) =>
+  static TextStyle _style(double s, FontWeight w) =>
       TextStyle(fontSize: s, fontWeight: w);
 
   /// This is the first and generic theme that we have available
-  TextTheme standard() => TextTheme(
+  static TextTheme standard() => TextTheme(
         headline1: _style(96.0, FontWeight.normal),
         headline2: _style(60.0, FontWeight.bold),
         headline3: _style(48.0, FontWeight.normal),

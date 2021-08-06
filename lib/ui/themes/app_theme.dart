@@ -1,122 +1,106 @@
-// import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:mj/ui/themes/mj_color_scheme.dart';
+import 'package:mj/ui/themes/mj_text_theme.dart';
 
-// class AppTheme {
-//   AppTheme({this.primaryColor});
+import 'color_utils.dart';
 
-//   /// fromType factory constructor
-//   factory AppTheme.fromType(
-//       {required ThemeType themeType, Color? primaryColor}) {
-//     final Color primaryColorVariant =
-//         ColorUtil().darken(primaryColor ?? _AppColors.primary, 0.2);
-//     switch (themeType) {
-//       case ThemeType.LightMode:
-//         return AppTheme(primaryColor: primaryColor)
-//           ..isDark = false
-//           ..bg = _AppColors.greySurface
-//           ..surface = Colors.white
-//           ..primary = primaryColor ?? _AppColors.primary
-//           ..primaryVariant = primaryColorVariant
-//           ..secondary = _AppColors.accent
-//           ..secondaryVariant = _AppColors.accentDark
-//           ..grey = _AppColors.grey
-//           ..error = _AppColors.redLightMode
-//           ..focus = _AppColors.grey
-//           ..accentTxt = _AppColors.textLight
-//           ..txt = _AppColors.textDark;
+/// Helper class for creating consistent app themes
+class AppTheme {
+  /// Primary Constructor
+  AppTheme({
+    this.defaultTheme = ThemeMode.light,
+    required this.primaryColor,
+    required this.primaryVariant,
+    this.txt,
+    this.accentTxt,
+  });
 
-//       case ThemeType.DarkMode:
-//         return AppTheme(primaryColor: primaryColor)
-//           ..isDark = true
-//           ..bg = _AppColors.blackBackground
-//           ..surface = _AppColors.blackSurface
-//           ..primary = primaryColor ?? _AppColors.primary
-//           ..primaryVariant = primaryColorVariant
-//           ..secondary = _AppColors.accentDark
-//           ..secondaryVariant = _AppColors.accent
-//           ..grey = _AppColors.grey
-//           ..error = _AppColors.redDarkMode
-//           ..focus = _AppColors.grey
-//           ..accentTxt = _AppColors.textDark
-//           ..txt = _AppColors.textLight;
-//     }
-//   }
-//   final Color? primaryColor;
+  /// fromType factory constructor
+  factory AppTheme.fromType({ThemeMode? themeMode, Color? primaryColor}) {
+    return AppTheme(
+      defaultTheme: themeMode,
+      primaryColor: primaryColor ?? const Color(0xFFF0F0F0),
+      primaryVariant: ColorUtil().darken(
+        primaryColor ?? const Color(0xFFF0F0F0),
+        0.2,
+      ),
+      txt: themeMode == ThemeMode.light
+          ? const Color(0xFF0F0F0F)
+          : const Color(0xFFf7f7f7),
+      accentTxt: themeMode == ThemeMode.light
+          ? const Color(0xFFf7f7f7)
+          : const Color(0xFF0F0F0F),
+    );
+  }
 
-//   static ThemeType defaultTheme = ThemeType.LightMode;
+  /// Primary color can be specified by calling app
+  final Color primaryColor;
 
-//   late bool isDark;
-//   late Color bg;
-//   late Color surface;
-//   late Color primary;
-//   late Color primaryVariant;
-//   late Color secondary;
-//   late Color secondaryVariant;
-//   late Color grey;
-//   late Color error;
-//   late Color focus;
+  /// Primary color can be specified by calling app
+  final Color primaryVariant;
 
-//   late Color txt;
-//   late Color accentTxt;
+  /// Primary text color
+  late final Color? txt;
 
-//   ThemeData get themeData {
-//     final t = ThemeData.from(
-//       textTheme: _buildTextTheme(),
-//       colorScheme: ColorScheme(
-//         brightness: isDark ? Brightness.dark : Brightness.light,
-//         primary: primary,
-//         primaryVariant: primaryVariant,
-//         secondary: secondary,
-//         secondaryVariant: secondaryVariant,
-//         background: bg,
-//         surface: surface,
-//         onBackground: txt,
-//         onSurface: txt,
-//         onError: txt,
-//         onPrimary: isDark ? accentTxt : txt,
-//         onSecondary: accentTxt,
-//         error: error,
-//       ),
-//     );
-//     return t.copyWith(
-//         appBarTheme: AppBarTheme(
-//             systemOverlayStyle: isDark
-//                 ? SystemUiOverlayStyle.dark
-//                 : SystemUiOverlayStyle.light),
-//         brightness: isDark ? Brightness.dark : Brightness.light,
-//         typography: Typography.material2018(),
-//         accentTextTheme: _buildTextTheme().apply(bodyColor: accentTxt),
-//         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-//         textSelectionTheme: TextSelectionThemeData(
-//           cursorColor: primary,
-//           selectionColor: grey,
-//           selectionHandleColor: Colors.transparent,
-//         ),
-//         iconTheme: IconThemeData(color: grey, size: 30),
-//         buttonColor: primary,
-//         // this theme currently used for HomeButtonNav only
-//         // if other TextButtons are used, it will need to be extracted
-//         textButtonTheme: TextButtonThemeData(
-//           style: ButtonStyle(
-//             shape:
-//                 MaterialStateProperty.all<OutlinedBorder>(const CircleBorder()),
-//             foregroundColor: MaterialStateProperty.all<Color>(txt),
-//             overlayColor: MaterialStateProperty.resolveWith<Color?>(
-//               (Set<MaterialState> states) {
-//                 if (states.contains(MaterialState.hovered))
-//                   return grey.withOpacity(0.04);
-//                 if (states.contains(MaterialState.focused) ||
-//                     states.contains(MaterialState.pressed))
-//                   return grey.withOpacity(0.12);
-//                 return null; // Defer to the widget's default.
-//               },
-//             ),
-//           ),
-//         ),
-//         floatingActionButtonTheme: FloatingActionButtonThemeData(
-//           backgroundColor: primary,
-//           foregroundColor: isDark ? accentTxt : txt,
-//         ),
-//         highlightColor: primaryVariant,
-//         toggleableActiveColor: primaryVariant);
-//   }
-// }
+  /// Accent text color
+  late final Color? accentTxt;
+
+  /// Default is light mode
+  final ThemeMode? defaultTheme;
+
+  /// The color grey (not me)
+  static const Color grey = Color(0xFF757575);
+
+  /// Quick check if light or dark mode
+  bool get isDark => defaultTheme == ThemeMode.dark;
+
+  ThemeData get themeData {
+    return ThemeData.from(
+            textTheme: MjTextTheme.standard(),
+            colorScheme: defaultTheme == ThemeMode.light
+                ? MjColorTheme.light(primaryColor: primaryColor)
+                : MjColorTheme.dark(primaryColor: primaryColor))
+        .copyWith(
+            appBarTheme: AppBarTheme(
+                systemOverlayStyle: isDark
+                    ? SystemUiOverlayStyle.dark
+                    : SystemUiOverlayStyle.light),
+            brightness: isDark ? Brightness.dark : Brightness.light,
+            typography: Typography.material2018(),
+            accentTextTheme: MjTextTheme.standard().apply(bodyColor: accentTxt),
+            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            textSelectionTheme: TextSelectionThemeData(
+              cursorColor: primaryColor,
+              selectionColor: grey,
+              selectionHandleColor: Colors.transparent,
+            ),
+            iconTheme: const IconThemeData(color: grey, size: 30),
+            buttonColor: primaryColor,
+            // this theme currently used for HomeButtonNav only
+            // if other TextButtons are used, it will need to be extracted
+            textButtonTheme: TextButtonThemeData(
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all<OutlinedBorder>(
+                    const CircleBorder()),
+                foregroundColor: MaterialStateProperty.all<Color>(txt!),
+                overlayColor: MaterialStateProperty.resolveWith<Color?>(
+                  (Set<MaterialState> states) {
+                    if (states.contains(MaterialState.hovered))
+                      return grey.withOpacity(0.04);
+                    if (states.contains(MaterialState.focused) ||
+                        states.contains(MaterialState.pressed))
+                      return grey.withOpacity(0.12);
+                    return null; // Defer to the widget's default.
+                  },
+                ),
+              ),
+            ),
+            floatingActionButtonTheme: FloatingActionButtonThemeData(
+              backgroundColor: primaryColor,
+              foregroundColor: isDark ? accentTxt : txt,
+            ),
+            highlightColor: primaryVariant,
+            toggleableActiveColor: primaryVariant);
+  }
+}

@@ -5,10 +5,13 @@ import 'color_utils.dart';
 /// Allow choosing colors for app theme
 abstract class MjColorTheme {
   /// Standard Light Theme
-  ColorScheme light() => ColorScheme(
+  static ColorScheme light({Color? primaryColor, Color? primaryVariant}) =>
+      ColorScheme(
         brightness: Brightness.light,
-        primary: const Color(0xFFF0F0F0),
-        primaryVariant: ColorUtil().darken(const Color(0xFFF0F0F0), 0.2),
+        primary: primaryColor ?? const Color(0xFFF0F0F0),
+        primaryVariant: primaryColor != null
+            ? ColorUtil().darken(primaryColor, 0.2)
+            : ColorUtil().darken(const Color(0xFFF0F0F0), 0.2),
         secondary: const Color(0xFFE1994C),
         secondaryVariant: const Color(0xFFd1893C),
         background: const Color(0xFFE4E4E3),
@@ -22,10 +25,13 @@ abstract class MjColorTheme {
       );
 
   /// Standard Light Theme
-  ColorScheme dark() => ColorScheme(
+  static ColorScheme dark({Color? primaryColor, Color? primaryVariant}) =>
+      ColorScheme(
         brightness: Brightness.dark,
-        primary: const Color(0xFFF0F0F0),
-        primaryVariant: ColorUtil().darken(const Color(0xFFF0F0F0), 0.2),
+        primary: primaryColor ?? const Color(0xFFF0F0F0),
+        primaryVariant: primaryColor != null
+            ? ColorUtil().darken(primaryColor, 0.2)
+            : ColorUtil().darken(const Color(0xFFF0F0F0), 0.2),
         secondary: const Color(0xFFd1893C),
         secondaryVariant: const Color(0xFFE1994C),
         background: const Color(0xFF292929),
